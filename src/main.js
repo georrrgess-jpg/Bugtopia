@@ -135,7 +135,7 @@ document.addEventListener(
   'click',
   (e) => {
     const btn = e.target instanceof Element ? e.target.closest('button') : null;
-    if (btn && btn._born && performance.now() - btn._born < 350) {
+    if (btn && btn._born && performance.now() - btn._born < 300) {
       e.stopImmediatePropagation();
       e.preventDefault();
     }
