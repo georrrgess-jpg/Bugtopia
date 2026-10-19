@@ -21,14 +21,14 @@ export function attachInput(canvas, view) {
   canvas.addEventListener('pointerdown', (e) => {
     audio.unlock();
     if (e.button === 2) return;
-    if (e.button !== 0 || !app.state) return;
+    if (e.button !== 0 || !app.state || down) return;
     const p = pos(e);
     down = { ...p, hit: view.hitTest(p.x, p.y), pointerId: e.pointerId };
     canvas.setPointerCapture(e.pointerId);
   });
 
   canvas.addEventListener('pointermove', (e) => {
-    if (!app.state) return;
+    if (!app.state || (down && e.pointerId !== down.pointerId)) return;
     const p = pos(e);
     app.ui.hover = view.tileAt(p.x, p.y);
     const drag = app.ui.drag;
@@ -38,7 +38,6 @@ export function attachInput(canvas, view) {
       if (!placing && hit && (hit.kind === 'station' || hit.kind === 'creature')) {
         app.ui.drag = { kind: hit.kind, id: hit.id, px: p.x, py: p.y, tile: app.ui.hover, active: true };
         if (app.ui.mode) setMode(null);
-        select({ kind: hit.kind, id: hit.id });
         canvas.classList.add('dragging');
       }
     }
@@ -54,17 +53,23 @@ export function attachInput(canvas, view) {
   });
 
   canvas.addEventListener('pointerup', (e) => {
-    if (!down) return;
+    if (!down || e.pointerId !== down.pointerId) return;
     const p = pos(e);
     const drag = app.ui.drag;
-    if (drag) drop(drag, view.tileAt(p.x, p.y));
-    else handleTap(view, p);
     down = null;
+    if (drag) {
+      app.ui.drag = null;
+      drop(drag, view.tileAt(p.x, p.y));
+      select({ kind: drag.kind, id: drag.id });
+    } else {
+      handleTap(view, p);
+    }
     app.ui.drag = null;
     canvas.classList.remove('dragging');
   });
 
-  canvas.addEventListener('pointercancel', () => {
+  canvas.addEventListener('pointercancel', (e) => {
+    if (down && e.pointerId !== down.pointerId) return;
     down = null;
     app.ui.drag = null;
     canvas.classList.remove('dragging');
@@ -147,11 +152,12 @@ function handleTap(view, p) {
   const hit = view.hitTest(p.x, p.y);
 
   if (mode && mode.type === 'assign') {
-    if (hit && hit.kind === 'station') {
-      const r = act('assignCreature', mode.creatureId, hit.id);
+    const target = tile ? stationAt(state, tile.x, tile.y) : null;
+    if (target) {
+      const r = act('assignCreature', mode.creatureId, target.id);
       if (r.ok) {
         setMode(null);
-        announceAssignment(mode.creatureId, hit.id, r.displaced);
+        announceAssignment(mode.creatureId, target.id, r.displaced);
       }
       return;
     }

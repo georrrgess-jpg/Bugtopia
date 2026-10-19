@@ -5,6 +5,7 @@ import { iconImg } from './icons.js';
 // h('div', { class: 'x', onclick: fn, text: 'hi' }, child, ...)
 export function h(tag, props = {}, ...children) {
   const el = document.createElement(tag);
+  if (tag === 'button') el._born = performance.now();
   for (const [key, value] of Object.entries(props || {})) {
     if (value === undefined || value === null || value === false) continue;
     if (key === 'class') el.className = value;

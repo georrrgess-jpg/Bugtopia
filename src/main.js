@@ -84,7 +84,7 @@ function enterGame() {
 }
 
 async function newGameFlow() {
-  if (hasSave()) {
+  if (hasSave() || (app.screen === 'game' && app.state)) {
     const ok = await confirmDialog({
       title: 'Start a new game?',
       text: ['Your current workshop, creatures and Acorns will be replaced by a fresh start.', 'This cannot be undone.'],
@@ -102,16 +102,6 @@ function continueFlow() {
   if (!result.ok) {
     toast(`Couldn't load your save: ${result.error}`, 'warn', 5000);
     showTitle();
-
-// Handy for debugging from the browser console.
-window.bugtopia = {
-  app,
-  view,
-  advance(seconds) {
-    for (let t = 0; t < seconds; t += TICK_STEP) step(app.state, TICK_STEP);
-    refresh('tick');
-  },
-};
     return;
   }
   enterGame();
@@ -121,16 +111,6 @@ window.bugtopia = {
 function toTitleFlow() {
   saveNow();
   showTitle();
-
-// Handy for debugging from the browser console.
-window.bugtopia = {
-  app,
-  view,
-  advance(seconds) {
-    for (let t = 0; t < seconds; t += TICK_STEP) step(app.state, TICK_STEP);
-    refresh('tick');
-  },
-};
 }
 
 setSettingsHandlers({ toTitle: toTitleFlow, newGame: newGameFlow });
@@ -149,6 +129,20 @@ $('btn-title-settings').addEventListener('click', () => {
   audio.unlock();
   openSettings(false);
 });
+// Ignore clicks on buttons created a moment ago: when a panel rebuilds after
+// a click, a fast double-click must not press whatever appeared underneath.
+document.addEventListener(
+  'click',
+  (e) => {
+    const btn = e.target instanceof Element ? e.target.closest('button') : null;
+    if (btn && btn._born && performance.now() - btn._born < 350) {
+      e.stopImmediatePropagation();
+      e.preventDefault();
+    }
+  },
+  true,
+);
+
 // Any first interaction may start audio.
 window.addEventListener('pointerdown', () => audio.unlock(), { once: true });
 window.addEventListener('keydown', () => audio.unlock(), { once: true });
@@ -192,7 +186,8 @@ const sheetInspector = window.matchMedia('(max-width: 899px), (max-width: 1099px
 // Pick the workshop area that leaves the largest tiles, given which panels
 // are on screen.
 function updateSafeArea() {
-  if (app.screen !== 'game') return;
+  // Never shift the workshop under the player's finger mid-drag.
+  if (app.screen !== 'game' || app.ui.drag) return;
   const W = window.innerWidth;
   const H = window.innerHeight;
   const side = !sheetInspector.matches;
