@@ -1,12 +1,16 @@
 {
   "name": "bugtopia",
   "version": "0.1.0",
-  "description": "BUGTOPIA — a charming creature-powered workshop game. Tiny Creatures. Big Ambitions.",
+  "description": "BUGTOPIA \u2014 a charming creature-powered workshop game. Tiny Creatures. Big Ambitions.",
   "private": true,
   "type": "module",
   "scripts": {
     "start": "npx --yes serve -l 8080 .",
-    "test": "node --test tests/*.test.js"
+    "test": "node --test tests/*.test.js",
+    "build": "node scripts/build-single.mjs"
   },
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "esbuild": "0.24.0"
+  }
 }

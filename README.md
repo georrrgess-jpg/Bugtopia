@@ -11,9 +11,14 @@ small crafting economy, a market with orders, upgrades, and reliable saving.
 
 ## Playing
 
-The game is plain HTML, CSS and JavaScript modules with no build step and no
-dependencies. Browsers only load ES modules over HTTP, so serve the folder with
-any static server:
+**Easiest:** open [`dist/bugtopia.html`](dist/bugtopia.html) — the whole game in
+one file. Download it and double-click it; no server or install needed.
+
+To rebuild that file after changing the code: `npm install && npm run build`.
+
+For development, the game runs straight from the source files (no build step),
+but browsers only load ES modules over HTTP, so serve the folder with any
+static server:
 
 ```sh
 npm start            # serves on http://localhost:8080 (uses `npx serve`)
@@ -80,6 +85,8 @@ src/
   main.js             Boot, screens and game loop
 tests/                Node tests for the economy, saves and a full playthrough
 dev/gallery.html      Art gallery of every creature and station (dev aid)
+scripts/              build-single.mjs bundles the game into dist/bugtopia.html
+dist/bugtopia.html    The single-file build — open it directly in a browser
 ```
 
 ### Design notes
