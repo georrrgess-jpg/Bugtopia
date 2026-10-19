@@ -95,7 +95,6 @@ async function newGameFlow() {
   }
   startNewGame();
   enterGame();
-  setTimeout(() => toast('Welcome to BUGTOPIA! Your first Mosslet is ready for work.', 'good', 4200, 'star'), 400);
 }
 
 function continueFlow() {

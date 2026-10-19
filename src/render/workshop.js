@@ -402,7 +402,9 @@ export class WorkshopView {
       const dx = fx.tx - fx.x;
       const dy = fx.ty - fx.y;
       const dist = Math.hypot(dx, dy);
-      const speed = c.species === 'nectabee' ? 2.4 : c.species === 'emberpup' ? 1.6 : 1.4;
+      // Creatures hurry when they have a long way to go.
+      const hurry = Math.min(3, Math.max(1, dist / 2.5));
+      const speed = (c.species === 'nectabee' ? 2.4 : c.species === 'emberpup' ? 1.6 : 1.4) * hurry;
       if (dist > 0.02) {
         const stepLen = Math.min(dist, speed * dt);
         fx.x += (dx / dist) * stepLen;

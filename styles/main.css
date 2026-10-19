@@ -1833,6 +1833,10 @@ h3 {
     border-radius: 16px;
   }
 
+  .toast:nth-child(n + 3) {
+    display: none;
+  }
+
   .btn-big {
     min-width: 210px;
     min-height: 52px;
