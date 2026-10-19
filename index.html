@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>BUGTOPIA</title>
+    <meta name="description" content="BUGTOPIA — Tiny Creatures. Big Ambitions. A cosy, creature-powered workshop game." />
+    <meta name="theme-color" content="#2a1b12" />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@500;600;700;800&display=swap"
+    />
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body>
+    <div id="app">
+      <section id="title-screen" class="screen" aria-label="BUGTOPIA title screen">
+        <canvas id="title-canvas" aria-hidden="true"></canvas>
+        <div class="title-content">
+          <h1 class="logo" aria-label="BUGTOPIA">
+            <span>B</span><span>U</span><span>G</span><span>T</span><span>O</span><span>P</span><span>I</span><span>A</span>
+          </h1>
+          <p class="tagline">Tiny Creatures. Big Ambitions.</p>
+          <div class="title-buttons">
+            <button id="btn-continue" class="btn btn-primary btn-big" hidden>Continue</button>
+            <p id="continue-info" class="continue-info" hidden></p>
+            <button id="btn-new" class="btn btn-primary btn-big">Play</button>
+            <button id="btn-title-settings" class="btn btn-secondary">Settings</button>
+          </div>
+        </div>
+        <p class="title-footer">Phase 1 &middot; v<span id="version"></span></p>
+      </section>
+
+      <section id="game-screen" class="screen" hidden aria-label="Your workshop">
+        <canvas id="workshop" aria-label="Workshop floor. Tap creatures and stations to select them."></canvas>
+        <header id="hud"></header>
+        <aside id="goal-card" aria-live="polite"></aside>
+        <aside id="inspector" aria-live="polite"></aside>
+        <div id="mode-banner" hidden></div>
+        <nav id="dock" aria-label="Workshop menu"></nav>
+        <div id="sheet-layer"></div>
+      </section>
+
+      <div id="modal-layer"></div>
+      <div id="toasts" aria-live="polite"></div>
+    </div>
+    <noscript><p class="noscript">BUGTOPIA needs JavaScript to run.</p></noscript>
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>

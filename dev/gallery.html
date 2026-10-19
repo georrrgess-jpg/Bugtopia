@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>BUGTOPIA art gallery</title>
+    <style>
+      body { margin: 0; background: #2a1b12; color: #fff4dc; font: 600 14px system-ui, sans-serif; }
+      h1 { margin: 16px; font-size: 18px; }
+      canvas { display: block; margin: 0 16px 16px; background: #c08a55; border-radius: 12px; }
+    </style>
+  </head>
+  <body>
+    <!-- Development aid: every creature and station, animating, idle and working.
+         Serve the repository root (npm start) and open /dev/gallery.html. -->
+    <h1>BUGTOPIA art gallery</h1>
+    <canvas id="c" width="960" height="520"></canvas>
+    <script type="module">
+      import { drawCreature } from '../src/render/creatures.js';
+      import { drawStation, creatureAnchor } from '../src/render/stations.js';
+      import { SPECIES_IDS } from '../src/data/species.js';
+
+      const canvas = document.getElementById('c');
+      const ctx = canvas.getContext('2d');
+      const T = 140;
+      const start = performance.now();
+      const scenes = [
+        ['gathering', null, false],
+        ['gathering', 'mosslet', true],
+        ['gathering', 'nectabee', true],
+        ['crafting', 'emberpup', true],
+        ['crafting', null, false],
+        ['storage', null, false],
+      ];
+      function frame(now) {
+        const t = (now - start) / 1000;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        SPECIES_IDS.forEach((id, i) => {
+          const x = 110 + i * 320;
+          drawCreature(ctx, id, x, 150, 2.4, { t, phase: i * 0.3 });
+          drawCreature(ctx, id, x + 140, 150, 1.4, { t, phase: i * 0.3, working: true, glow: id === 'emberpup' ? Math.max(0, Math.sin(t)) ** 6 : 0 });
+        });
+        scenes.forEach(([type, species, working], i) => {
+          const x = 90 + i * 155;
+          const y = 380;
+          drawStation(ctx, type, x, y, T / 100, { t, species, working, active: working && type === 'crafting', progress: (t / 4) % 1, fill: { mossFiber: 0.6, nectarDrop: 0.3, nectarWeave: 0.2 } });
+          if (species) {
+            const a = creatureAnchor(type, species);
+            drawCreature(ctx, species, x + a.x * T, y + a.y * T, (T / 100) * 1.12, { t, working, facing: a.facing });
+          }
+        });
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    </script>
+  </body>
+</html>
